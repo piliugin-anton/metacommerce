@@ -1,4 +1,5 @@
 const fs = require('fs')
+const { stringify } = require('csv-stringify/sync')
 const puppeteer = require('puppeteer-extra')
 
 // add stealth plugin and use defaults (all evasion techniques)
@@ -41,18 +42,19 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
       const priceElement = elements[index + 1]
       const price = priceElement?.childNodes[0]?.textContent || priceElement.textContent
 
-      items.push(`"${text}"|"${price}"`)
+      items.push([text, price])
     }
 
     return items
   })
   
   if (result.length) {
-    const header = 'Наименование|Цена'
-    result.unshift(header)
-
-    const CSV = result.join('\n')
-    fs.writeFileSync('result.csv', CSV)
+    const csv = stringify([
+      ['Наименование', 'Цена'],
+      ...result
+    ])
+    
+    fs.writeFileSync('result.csv', csv, { encoding: 'utf8' })
   } else {
     console.log('Не найдено товаров')
   }
