@@ -7,7 +7,7 @@ puppeteer.use(StealthPlugin())
 
 const randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 
-puppeteer.launch({ headless: false/*'new'*/ }).then(async (browser) => {
+puppeteer.launch({ headless: 'new' }).then(async (browser) => {
   const page = await browser.newPage()
   await page.goto('https://www.dns-shop.ru/catalog/17a8d26216404e77/vstraivaemye-xolodilniki/', {
     waitUntil: 'networkidle2'
