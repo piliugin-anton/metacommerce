@@ -41,7 +41,7 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
       const priceElement = elements[index + 1]
       const price = priceElement?.childNodes[0]?.textContent || priceElement.textContent
 
-      items.push(`"${text}"|${price}`)
+      items.push(`"${text}"|"${price}"`)
     }
 
     return items
