@@ -33,7 +33,6 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
       await page.waitForTimeout(randomIntFromInterval(2134, 3456))
     }
   }
-  
 
   const result = await page.evaluate(() => {
     const items = []
