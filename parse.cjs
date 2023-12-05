@@ -8,9 +8,11 @@ puppeteer.use(StealthPlugin())
 
 const randomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
 
+const url = 'https://www.dns-shop.ru/catalog/17a8d26216404e77/vstraivaemye-xolodilniki/'
+
 puppeteer.launch({ headless: 'new' }).then(async (browser) => {
   const page = await browser.newPage()
-  await page.goto('https://www.dns-shop.ru/catalog/17a8d26216404e77/vstraivaemye-xolodilniki/', {
+  await page.goto(url, {
     waitUntil: 'networkidle2'
   })
 
@@ -19,7 +21,7 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
 
   const paginationSelector = 'ul.pagination-widget__pages'
   if (await page.$(paginationSelector)) {
-    const pagination = await page.waitForSelector(productsListSelector, { visible: true })
+    const pagination = await page.waitForSelector(paginationSelector, { visible: true })
     const pages = await pagination.evaluate((page) => page.textContent)
     const totalPages = pages && pages.length > 1 ? parseInt(pages.substring(pages.length - 1), 10) : 1
 
