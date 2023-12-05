@@ -14,21 +14,26 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
     waitUntil: 'networkidle2'
   })
 
+  const productsListSelector = 'div.products-list__content'
+  const productsList = await page.waitForSelector(productsListSelector, { visible: true })
+
   const paginationSelector = 'ul.pagination-widget__pages'
-  const pagination = await page.waitForSelector(paginationSelector, { visible: true })
+  if (await page.$(paginationSelector)) {
+    const pagination = await page.waitForSelector(productsListSelector, { visible: true })
+    const pages = await pagination.evaluate((page) => page.textContent)
+    const totalPages = pages && pages.length > 1 ? parseInt(pages.substring(pages.length - 1), 10) : 1
 
-  const pages = await pagination.evaluate((page) => page.textContent)
-  const totalPages = pages && pages.length > 1 ? parseInt(pages.substring(pages.length - 1), 10) : 1
+    const buttonSelector = 'button.pagination-widget__show-more-btn'
 
-  const buttonSelector = 'button.pagination-widget__show-more-btn'
-
-  for (let currentPage = 1; currentPage < totalPages; currentPage++) {
-    await page.waitForSelector(buttonSelector, { visible: true })
-    await page.click(buttonSelector)
-    await page.waitForSelector('div.catalog-preloader_active', { hidden: false })
-    await page.waitForSelector('div.catalog-preloader_active', { hidden: true })
-    await page.waitForTimeout(randomIntFromInterval(2134, 3456))
+    for (let currentPage = 1; currentPage < totalPages; currentPage++) {
+      await page.waitForSelector(buttonSelector, { visible: true })
+      await page.click(buttonSelector)
+      await page.waitForSelector('div.catalog-preloader_active', { hidden: false })
+      await page.waitForSelector('div.catalog-preloader_active', { hidden: true })
+      await page.waitForTimeout(randomIntFromInterval(2134, 3456))
+    }
   }
+  
 
   const result = await page.evaluate(() => {
     const items = []
@@ -59,5 +64,6 @@ puppeteer.launch({ headless: 'new' }).then(async (browser) => {
     console.log('Не найдено товаров')
   }
 
+  await productsList.dispose()
   await browser.close()
 })
